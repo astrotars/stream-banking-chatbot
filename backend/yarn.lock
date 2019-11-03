@@ -3961,6 +3961,11 @@ path-type@^2.0.0:
   dependencies:
     pify "^2.0.0"
 
+pb-util@^0.1.0:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/pb-util/-/pb-util-0.1.2.tgz#87a87752ce28146283cbd058927d7c78e3f7cb4a"
+  integrity sha512-QUd71PSYf/IpPM6twbrQSs3xu+LW1ip+WKUW58t2H/2ZfeCZzObRACSJ7U/dUzGVVB4SsC5m+gLx74FNCK7rpg==
+
 pend@~1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/pend/-/pend-1.2.0.tgz#7a57eb550a6783f9115331fcf4663d5c8e007a50"
