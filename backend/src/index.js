@@ -6,9 +6,9 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
-import { StreamChat } from "stream-chat";
-import { generator } from "./controllers/v1/virgil-credentials";
-import { EThree, IdentityAlreadyExistsError } from "@virgilsecurity/e3kit";
+import { chat } from './stream';
+import { getEThree } from "./virgil";
+import { IdentityAlreadyExistsError } from "@virgilsecurity/e3kit";
 
 dotenv.config();
 
@@ -31,19 +31,13 @@ api.listen(process.env.PORT, async error => {
     require('./routes/' + file)(api);
   });
 
-  const apiKey = process.env.STREAM_API_KEY;
-  const apiSecret = process.env.STREAM_API_SECRET;
-
-  const client = new StreamChat(apiKey, apiSecret);
-
-  client.updateUsers([{
+  chat.updateUsers([{
     id: "chatbot",
     role: "admin",
     image: "https://robohash.org/server",
   }]);
 
-  const chatbotToken = generator.generateToken('chatbot');
-  const eThree = await EThree.initialize(() => chatbotToken);
+  const eThree = await getEThree();
   try {
     await eThree.register();
   } catch (err) {
