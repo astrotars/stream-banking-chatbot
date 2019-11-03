@@ -67,3 +67,4 @@ dist/
 .DS_Store
 
 .virgil-local-storage
+dialogflow-key.json
