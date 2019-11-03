@@ -1,12 +1,12 @@
-# Stream Encrypted Chat w/ Virgil Boilerplate API
+# Stream Encrypted Chat w/ Virgil and DialogFlow Boilerplate API
 
 > **_This API is not meant for production as there is no auth in place. Please
 > use carefully in testing and development environments only!_**
 
 ## Getting Started
 
-Create account an account with Stream and Virgil. With Virgil you need to create
-a new Application and create new App Keys within that Application.
+Create account an account and project with Stream, Virgil and DialogFlow. With Virgil you need to create
+a new Application and create new App Keys within that Application. For DialogFlow follow this [project](https://github.com/googleapis/nodejs-dialogflow)
 
 Create a `.env` file within the main directory with the
 following environment variables found on https://getstream.io/dashboard and
