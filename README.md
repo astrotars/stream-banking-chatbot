@@ -57,7 +57,7 @@ don't understand what is said. These are a greeting, check balances, and
 transfer money between accounts. Once we're done we'll have a chatbot that's
 capable of this:
 
-![Full Functionality](./images/Building the chatbot. Full Functionality.png)
+![Full Functionality](images/building-the-chatbot_full-functionality.png)
 
 To accomplish this, the app performs the following steps:
 
