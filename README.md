@@ -138,11 +138,29 @@ Dialogflow:
 * Add a "Check Accounts" intent. Click on "Intents" in the nav, and click
   "Create Intent". For this intent all we need is a few training phrases that
   indicate what sort of phrase means the user wants to check their account
-  balances. This intent should look something like this:
+  balances. Make sure to add some responses in the "Responses" section. This
+  intent should look something like this:
   
-![Check Accounts]()
+![Check Accounts](images/step-1_check-accounts.png)
 
-## Step 2. Set up the Backend
+* Add a "Transfer" entity. Click on "Entities" in the nav, and click "Create
+  Entity". Name it "transfer" and create two synonyms, "checking to savings" and
+  "savings to checking":
+  
+![transfer](images/step-1_transfer.png)
+
+* Now add a "Transfer Money" intent. This one is a bit more complex as it'll
+  need some parameters identified in order to work correctly. Add two training
+  phrases, "transfer 300 dollars from savings to checking" and "transfer 300
+  dollars from checking to savings". Dialogflow should automatically detect the
+  currency entity "300 dollars" and add that parameter. Highlight the transfer
+  words in each phrase (for example, "savings to checking") and set the entity
+  type to "transfer". Make sure to add whatever response you'd like. Your final
+  result should look like this:
+  
+![transfer action](images/step-1_transfer-money.png)
+
+## Step 2. Set up the Backend to allow browser to get credentials
 For our React frontend to interact with Stream and Virgil, the
 application provides three endpoints:
 
