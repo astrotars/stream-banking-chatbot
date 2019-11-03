@@ -8,9 +8,10 @@
 Create account an account and project with Stream, Virgil and DialogFlow. With Virgil you need to create
 a new Application and create new App Keys within that Application. For DialogFlow follow this [project](https://github.com/googleapis/nodejs-dialogflow)
 
-Create a `.env` file within the main directory with the
-following environment variables found on https://getstream.io/dashboard and
-https://dashboard.virgilsecurity.com/apps/<your_virgil_app_id>/keys:
+Create a `.env` file within the main directory with the following environment
+variables found on https://getstream.io/dashboard,
+https://dashboard.virgilsecurity.com/apps/<your_virgil_app_id>/keys, and the
+credentials from Google, following the previously mentioned project setup:
 
 ```
 NODE_ENV=production
