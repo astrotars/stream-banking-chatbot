@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import { EThree } from "@virgilsecurity/e3kit";
 
 const { JwtGenerator } = require('virgil-sdk');
 const { VirgilCrypto, VirgilAccessTokenSigner } = require('virgil-crypto');
@@ -14,9 +15,16 @@ const generator = new JwtGenerator({
   accessTokenSigner: new VirgilAccessTokenSigner(virgilCrypto)
 });
 
+const publicKeys = {};
+
+exports.generator = generator;
+exports.publicKeys = publicKeys;
 
 exports.virgilCredentials = async (req, res) => {
   const virgilJwtToken = generator.generateToken(req.user.sender);
+  const chatbotToken = generator.generateToken('chatbot');
+  const eThree = await EThree.initialize(() => chatbotToken);
+  publicKeys[req.user.sender] = (await eThree.lookupPublicKeys([req.user.sender]))[req.user.sender];
 
   res.json({ token: virgilJwtToken.toString() });
 };

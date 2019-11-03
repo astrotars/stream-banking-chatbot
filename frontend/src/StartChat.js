@@ -29,13 +29,13 @@ export class StartChat extends PureComponent {
 
   _handleStartChat = async () => {
     try {
-      const channel = this.state.stream.client.channel('team', `${this.state.sender}-server`, {
+      const channel = this.state.stream.client.channel('team', `${this.state.sender}-chatbot`, {
         image: `https://getstream.io/random_svg/?id=rapid-recipe-0&name=${this.state.sender}`,
         name: this.state.sender,
-        members: [this.state.sender, 'server'],
+        members: [this.state.sender, 'chatbot'],
       });
 
-      const publicKeys = await this.state.virgil.eThree.lookupPublicKeys([this.state.sender]);
+      const publicKeys = await this.state.virgil.eThree.lookupPublicKeys([this.state.sender, 'chatbot']);
 
       this.props.onConnect({
         sender: this.state.sender,
@@ -81,24 +81,14 @@ export class StartChat extends PureComponent {
   };
 
   render() {
-    let form;
-    form = {
-      field: 'sender',
-      title: 'Who are you?',
-      subtitle: 'Enter a username.',
-      submitLabel: 'Register',
-      submit: this._handleRegister,
-      handleFieldChange: this._handleSenderChange
-    };
-
     return (
       <div className="container">
-        <form className="card" onSubmit={form.submit}>
-          <label htmlFor={form.field}>{form.title}</label>
-          <div className='subtitle'>{form.subtitle}</div>
-          <input id="sender" type="text" name={form.field} value={this.state[form.field]}
-                 onChange={form.handleFieldChange}/>
-          <input type="submit" value={form.submitLabel}/>
+        <form className="card" onSubmit={this._handleRegister}>
+          <label htmlFor='sender'>Who are you?</label>
+          <div className='subtitle'>Enter a username</div>
+          <input id="sender" type="text" name='sender' value={this.state['sender']}
+                 onChange={this._handleSenderChange}/>
+          <input type="submit" value='Register'/>
           <div className="error">{this.state.error}</div>
         </form>
       </div>

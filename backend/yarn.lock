@@ -694,10 +694,98 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
+"@types/base-64@^0.1.3":
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/@types/base-64/-/base-64-0.1.3.tgz#875320c0d019f576a179324124cdbd5031a411f5"
+  integrity sha512-DJpw7RKNMXygZ0j2xe6ROBqiJUy7JWEItkzOPBzrT35HUWS7VLYyW9XJX8yCCvE2xg8QD7wesvVyXFg8AVHTMA==
+
+"@types/node@^12.7.2":
+  version "12.12.5"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.5.tgz#66103d2eddc543d44a04394abb7be52506d7f290"
+  integrity sha512-KEjODidV4XYUlJBF3XdjSH5FWoMCtO0utnhtdLf1AgeuZLOrRbvmU/gaRCVg7ZaQDjVf3l84egiY0mRNe5xE4A==
+
 "@types/normalize-package-data@^2.4.0":
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@types/normalize-package-data/-/normalize-package-data-2.4.0.tgz#e486d0d97396d79beedd0a6e33f4534ff6b4973e"
   integrity sha512-f5j5b/Gf71L+dbqxIpQ4Z2WlmI/mPJ0fOkGGmFgtb6sAu97EPczzbS3/tJKxmcYDj55OX6ssqwDAWOHIYDRDGA==
+
+"@types/utf8@^2.1.6":
+  version "2.1.6"
+  resolved "https://registry.yarnpkg.com/@types/utf8/-/utf8-2.1.6.tgz#430cabb71a42d0a3613cce5621324fe4f5a25753"
+  integrity sha512-pRs2gYF5yoKYrgSaira0DJqVg2tFuF+Qjp838xS7K+mJyY2jJzjsrl6y17GbIa4uMRogMbxs+ghNCvKg6XyNrA==
+
+"@virgilsecurity/base-crypto@^0.6.1":
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@virgilsecurity/base-crypto/-/base-crypto-0.6.1.tgz#ee1e318ec1fd6d8add59f4d7cb07fef60ad3e81f"
+  integrity sha512-4xpU3VQ6Yp0t79q4B6UYO9DEFb7t3TEP1UuCD1bEI2YNyDapRz8s2Pa0l8bvBaUl88/O6xoQ3aJAYwluC6yX+w==
+  dependencies:
+    "@virgilsecurity/crypto-types" "^0.2.0"
+    "@virgilsecurity/data-utils" "^0.1.6"
+
+"@virgilsecurity/core-foundation@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@virgilsecurity/core-foundation/-/core-foundation-0.3.0.tgz#62830204b3518e8944aeb89577fd6504874dc3f4"
+  integrity sha512-6Ug3vjubwqbc1V/A0UoGB2e6oX3kWjdMpIbQ4tqTn4IdzM4ntJYvcEjSWYKZ46e/0DYrgWvhX94e7kbYwyzKVA==
+
+"@virgilsecurity/core-pythia@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@virgilsecurity/core-pythia/-/core-pythia-0.3.0.tgz#0f4e625ac1ad1eaea0bd34a253c50cbef5e68d66"
+  integrity sha512-1OiSvbLWejhoeZGZ5x2V6olIt1AO6pAF7VC+tQwTGS+Iq7m772qXFGFGZ4plKNWNA5phuT/7CNcfgtz1B6UOKQ==
+
+"@virgilsecurity/crypto-types@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@virgilsecurity/crypto-types/-/crypto-types-0.2.0.tgz#27040fbda702389bfc8396aa663f91dadf8605ec"
+  integrity sha512-17kDAM/rMrfB5uHuK1k+2ExIulRnnsyx8PL//FcTmT/xm8KNd+/7C2JztIJ1xdpIh8sgjrgnjZ+rVHcNaM54hQ==
+  dependencies:
+    "@types/node" "^12.7.2"
+
+"@virgilsecurity/data-utils@^0.1.6":
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@virgilsecurity/data-utils/-/data-utils-0.1.6.tgz#a5502b05e80e11353c819615f9c81444271216de"
+  integrity sha512-51QEmWLdCx+wcmL47NIKeuomOwF2A1rOVkLxDHFYvzK3zgzMiSOSYwdi2czr3T5yQNqyFLtCGCDIZGPSk89kGg==
+  dependencies:
+    "@virgilsecurity/crypto-types" "^0.2.0"
+    buffer "^5.2.1"
+
+"@virgilsecurity/e3kit@^0.6.2":
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/@virgilsecurity/e3kit/-/e3kit-0.6.2.tgz#a5727d6a282cfc876d009916e4f59d175ad24f40"
+  integrity sha512-StJZPzpufKHvEd3bxug8PcAKxm911W30DFDx/Hu+5g/WiYt58RAfwrLu3VLAnLmIXQ+FiuoldTiu0kFSKmFBOw==
+  dependencies:
+    "@virgilsecurity/base-crypto" "^0.6.1"
+    "@virgilsecurity/core-foundation" "^0.3.0"
+    "@virgilsecurity/crypto-types" "^0.2.0"
+    "@virgilsecurity/keyknox" "~0.3.3"
+    "@virgilsecurity/pythia-crypto" "^0.2.2"
+    "@virgilsecurity/sdk-crypto" "^0.4.5"
+    virgil-pythia "^0.3.4"
+    virgil-sdk "^6.0.0-alpha.5"
+
+"@virgilsecurity/keyknox@~0.3.3":
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/@virgilsecurity/keyknox/-/keyknox-0.3.3.tgz#71d4f2f339c91a49bb48c86bdcb3aa4f5ec17d81"
+  integrity sha512-mIVyuNp5ifAJT2lL+wzwbLcMAFDfW8iO791QVSzsVf3ECAaMFpJXnLeCNF92QW9cExMYZlRIdgR+Ws5eoQwW8Q==
+  dependencies:
+    "@types/base-64" "^0.1.3"
+    "@virgilsecurity/crypto-types" "^0.2.0"
+    axios "^0.19.0"
+    base-64 "^0.1.0"
+
+"@virgilsecurity/pythia-crypto@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@virgilsecurity/pythia-crypto/-/pythia-crypto-0.2.2.tgz#47f888145e02f1439e7139083d92986cead7c581"
+  integrity sha512-oCebbSL9oJ57fSGrQr490mNg9Oeh625H5NkxavhSRolUJ+6IVQNsl2wq08gJd2xcERLxiV4+EYCHiaV5Upff0Q==
+  dependencies:
+    "@virgilsecurity/core-pythia" "^0.3.0"
+    "@virgilsecurity/crypto-types" "^0.2.0"
+    "@virgilsecurity/data-utils" "^0.1.6"
+
+"@virgilsecurity/sdk-crypto@^0.4.5":
+  version "0.4.5"
+  resolved "https://registry.yarnpkg.com/@virgilsecurity/sdk-crypto/-/sdk-crypto-0.4.5.tgz#95eaaaf169f309f0abc5481394ff6fd1f853eb23"
+  integrity sha512-NrLTvw0eioG+uprxv2dEO0v4IMc/1+NEaGcmCmdtUIJISuXdYeAn3Vwp0oLOFHp3DTCp+SA6QdUL6pomkjv2Ag==
+  dependencies:
+    "@virgilsecurity/crypto-types" "^0.2.0"
 
 abbrev@1:
   version "1.1.1"
@@ -878,6 +966,14 @@ axios@^0.18.0:
     follow-redirects "^1.3.0"
     is-buffer "^1.1.5"
 
+axios@^0.19.0:
+  version "0.19.0"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.19.0.tgz#8e09bff3d9122e133f7b8101c8fbdd00ed3d2ab8"
+  integrity sha512-1uvKqKQta3KBxIz14F2v06AEHZ/dIoeKfbTRkK1E5oqjDnuEerLmYTgJB5AiQZHJcljpg1TuRzdjDR06qNk0DQ==
+  dependencies:
+    follow-redirects "1.5.10"
+    is-buffer "^2.0.2"
+
 axobject-query@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/axobject-query/-/axobject-query-2.0.2.tgz#ea187abe5b9002b377f925d8bf7d1c561adf38f9"
@@ -901,6 +997,16 @@ balanced-match@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
   integrity sha1-ibTRmasr7kneFk6gK4nORi1xt2c=
+
+base-64@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/base-64/-/base-64-0.1.0.tgz#780a99c84e7d600260361511c4877613bf24f6bb"
+  integrity sha1-eAqZyE59YAJgNhURxId2E78k9rs=
+
+base64-js@^1.0.2:
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.3.1.tgz#58ece8cb75dd07e71ed08c736abc5fac4dbf8df1"
+  integrity sha512-mLQ4i2QO1ytvGWFWmcngKO//JXAQueZvwEKtjgQFM4jIK0kU+ytMfplL8j+n5mspOfjHwoAg+9yhb7BwAHm36g==
 
 base@^0.11.1:
   version "0.11.2"
@@ -996,6 +1102,14 @@ buffer-from@^1.0.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/buffer-from/-/buffer-from-1.1.1.tgz#32713bc028f75c02fdb710d7c7bcec1f2c6070ef"
   integrity sha512-MQcXEUbCKtEo7bhqEs6560Hyd4XaovZlO/k9V3hjVUF/zwW7KBVdSK4gIt/bzwS9MbR5qob+F5jusZsb0YQK2A==
+
+buffer@^5.2.1:
+  version "5.4.3"
+  resolved "https://registry.yarnpkg.com/buffer/-/buffer-5.4.3.tgz#3fbc9c69eb713d323e3fc1a895eee0710c072115"
+  integrity sha512-zvj65TkFeIt3i6aj5bIvJDzjjQQGs4o/sNoezg1F1kYap9Nu2jcUdpwzRSJTHMMzG0H7bZkn4rNQpImhuxWX2A==
+  dependencies:
+    base64-js "^1.0.2"
+    ieee754 "^1.1.4"
 
 bytes@3.0.0:
   version "3.0.0"
@@ -1390,6 +1504,13 @@ debug@2.6.9, debug@^2.2.0, debug@^2.3.3, debug@^2.6.8, debug@^2.6.9:
   version "2.6.9"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.9.tgz#5d128515df134ff327e90a4c93f4e077a536341f"
   integrity sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==
+  dependencies:
+    ms "2.0.0"
+
+debug@=3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-3.1.0.tgz#5bb5a0672628b64149566ba16819e61518c67261"
+  integrity sha512-OX8XqP7/1a9cqkxYw2yXss15f26NKWBpDXQd0/uK/KPqdQhxbPa994hnzjcE2VqQpDslf55723cKPUOGSmMY3g==
   dependencies:
     ms "2.0.0"
 
@@ -2034,6 +2155,13 @@ flatted@^2.0.0:
   resolved "https://registry.yarnpkg.com/flatted/-/flatted-2.0.0.tgz#55122b6536ea496b4b44893ee2608141d10d9916"
   integrity sha512-R+H8IZclI8AAkSBRQJLVOsxwAoHd6WC40b4QTNWIjzAa6BXOBfQcM587MXDTVPeYaopFNWHUFLx7eNmHDSxMWg==
 
+follow-redirects@1.5.10:
+  version "1.5.10"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.5.10.tgz#7b7a9f9aea2fdff36786a94ff643ed07f4ff5e2a"
+  integrity sha512-0V5l4Cizzvqt5D44aTXbFZz+FtyXV1vrDN6qrelxtfYQKW0KO0W2T/hkE8xvGa/540LkZlkaUjO4ailYTFtHVQ==
+  dependencies:
+    debug "=3.1.0"
+
 follow-redirects@^1.3.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.7.0.tgz#489ebc198dc0e7f64167bd23b03c4c19b5784c76"
@@ -2354,6 +2482,11 @@ iconv-lite@0.4.24, iconv-lite@^0.4.24, iconv-lite@^0.4.4:
   dependencies:
     safer-buffer ">= 2.1.2 < 3"
 
+ieee754@^1.1.4:
+  version "1.1.13"
+  resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.1.13.tgz#ec168558e95aa181fd87d37f55c32bbcb6708b84"
+  integrity sha512-4vf7I2LYV/HaWerSo3XmlMkp5eZ83i+/CDluXi/IGTs/O1sejBNhTtnxzmRZfvOUqj7lZjqHkeTvpgSFDlWZTg==
+
 ienoopen@1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/ienoopen/-/ienoopen-1.1.0.tgz#411e5d530c982287dbdc3bb31e7a9c9e32630974"
@@ -2481,6 +2614,11 @@ is-buffer@^1.1.5, is-buffer@~1.1.1:
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-1.1.6.tgz#efaa2ea9daa0d7ab2ea13a97b2b8ad51fefbe8be"
   integrity sha512-NcdALwpXkTm5Zvvbk7owOUSvVvBKDgKP5/ewfXEznmQFfs4ZRmanOeKBTjRVjka3QFoN6XJ+9F3USqfHqTaU5w==
+
+is-buffer@^2.0.2:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-2.0.4.tgz#3e572f23c8411a5cfd9557c849e3665e0b290623"
+  integrity sha512-Kq1rokWXOPXWuaMAqZiJW4XxsmD9zGx9q4aePabbn3qCRGedtH7Cm+zV8WETitMfu1wdh+Rvd6w5egwSngUX2A==
 
 is-callable@^1.1.4:
   version "1.1.4"
@@ -4560,6 +4698,11 @@ use@^3.1.0:
   resolved "https://registry.yarnpkg.com/use/-/use-3.1.1.tgz#d50c8cac79a19fbc20f2911f56eb973f4e10070f"
   integrity sha512-cwESVXlO3url9YWlFW/TA9cshCEhtu7IKJ/p5soJ/gGpj7vbvFrAY/eIioQ6Dw23KjZhYgiIo8HOs1nQ2vr/oQ==
 
+utf8@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/utf8/-/utf8-3.0.0.tgz#f052eed1364d696e769ef058b183df88c87f69d1"
+  integrity sha512-E8VjFIQ/TyQgp+TZfS6l8yp/xWppSAHzidGiRrqe4bK4XP9pTRyKFgGJpO3SN7zdX4DeomTrwaseCHovfpFcqQ==
+
 util-deprecate@^1.0.1, util-deprecate@~1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
@@ -4606,6 +4749,14 @@ virgil-crypto@3.2.0:
     tempy "^0.2.1"
     yauzl "^2.9.1"
 
+virgil-pythia@^0.3.4:
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/virgil-pythia/-/virgil-pythia-0.3.4.tgz#ca67d5f50e2a4bf73718a1fe13e0fc239256d5e3"
+  integrity sha512-ZDqrMdaYqdHS4B6S5r6iSS80S1xoGQ5RjpPYa5mtiMFbUFggD/98HDmJ7FH9DDEHv3cYNLVaqA/J08iFRVEN3w==
+  dependencies:
+    "@virgilsecurity/crypto-types" "^0.2.0"
+    axios "^0.19.0"
+
 virgil-sdk@^5.3.0:
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/virgil-sdk/-/virgil-sdk-5.3.0.tgz#43f0233a5f9691051a123743ac66fc8e2522e9f3"
@@ -4614,6 +4765,20 @@ virgil-sdk@^5.3.0:
     fetch-ponyfill "^6.0.2"
     mkdirp "^0.5.1"
     rimraf "^2.6.2"
+
+virgil-sdk@^6.0.0-alpha.5:
+  version "6.0.0-alpha.5"
+  resolved "https://registry.yarnpkg.com/virgil-sdk/-/virgil-sdk-6.0.0-alpha.5.tgz#eb7b7483af4a2dbce6c312d3d83d0dcb373fab41"
+  integrity sha512-gtXxQQwRqNAvcBu6S8KebkEqFVfK1UZeH01GsmDy0391Lry6OPNpGeVNO0hGd83cr2iNs4Cnoq9Czo+mT0lDFQ==
+  dependencies:
+    "@types/base-64" "^0.1.3"
+    "@types/utf8" "^2.1.6"
+    "@virgilsecurity/crypto-types" "^0.2.0"
+    base-64 "^0.1.0"
+    fetch-ponyfill "^6.0.2"
+    mkdirp "^0.5.1"
+    rimraf "^2.6.2"
+    utf8 "^3.0.0"
 
 whatwg-fetch@3.0.0:
   version "3.0.0"

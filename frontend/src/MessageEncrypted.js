@@ -18,6 +18,13 @@ export class MessageEncrypted extends PureComponent {
             this.setState({ decryptedText });
           }
         }
+      )
+      .catch(
+        (err) => {
+          if (this._isMounted) {
+            this.setState({ decryptedText: `Something went wrong: ${err}` })
+          }
+        }
       );
   };
 
@@ -26,12 +33,11 @@ export class MessageEncrypted extends PureComponent {
   };
 
   _decryptText = async () => {
-    // const messageCreator = this.props.isMyMessage(this.props.message) ? this.props.sender : this.props.receiver;
-    // return this.props.virgil.eThree.decrypt(
-    //   this.props.message.text,
-    //   this.props.virgil.publicKeys[messageCreator]
-    // );
-    return this.props.message.text;
+    const messageCreator = this.props.isMyMessage(this.props.message) ? this.props.sender : 'chatbot';
+    return this.props.virgil.eThree.decrypt(
+      this.props.message.text,
+      this.props.virgil.publicKeys[messageCreator]
+    );
   };
 
   render = () => {
