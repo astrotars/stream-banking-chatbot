@@ -129,7 +129,7 @@ This tutorial uses the following package versions:
 Except for `node` and `yarn`, all of these dependencies are declared in 
 `backend/package.json` and `frontend/package.json`. 
 
-## Step 1. Set up Dialogflow
+## Step 1.1 Set up Dialogflow
 In order for our chatbot to respond correctly, we need to set up a few
 [intents](https://cloud.google.com/dialogflow/docs/intents-overview) and one
 [entity](https://cloud.google.com/dialogflow/docs/entities-overview) in our
@@ -160,7 +160,24 @@ Dialogflow:
   
 ![transfer action](images/step-1_transfer-money.png)
 
-## Step 2.1 Set up the backend to allow user to get credentials
+## Step 1.2 Set up Stream Webhooks
+
+In order for us to monitor and respond to a user's chat message we need to hook
+into Stream via [webhooks](https://getstream.io/chat/docs/js/#webhooks). From
+your Stream dashboard navigate to Chat -> Chat overview and look for the "Chat
+events" section. Switch the webhook to active and add the URL for your server.
+For local development, you can use a service like [ngrok](https://ngrok.com/) to
+make your localhost routable online. The path we'll use is `/v1/message` to
+handle all Stream events. For convenience, we'll turn off auth/permission
+checks. In a production environment make sure you don't bypass these and
+implement the necessary code to secure your Stream account. Your webhook should
+look like this with your, ngrok or otherwise, URL instead of the ngrok url.
+
+![Webhook Setup](images/step-2.2_webhook.png)
+
+We'll look at the implementation of `/v1/message` in [Step 9](#step-9).
+  
+## Step 2 Set up the backend to allow user to get credentials
 For our React frontend to interact with Stream and Virgil, the
 application provides three endpoints:
 
@@ -243,23 +260,6 @@ application provides three endpoints:
   ```
   In this case, the frontend only needs the auth token.
 
-## Step 2.2 Setup backend to monitor channel and respond to user
-
-In order for us to monitor and respond to a user's chat message we need to hook
-into Stream via [webhooks](https://getstream.io/chat/docs/js/#webhooks). From
-your Stream dashboard navigate to Chat -> Chat overview and look for the "Chat
-events" section. Switch the webhook to active and add the URL for your server.
-For local development, you can use a service like [ngrok](https://ngrok.com/) to
-make your localhost routable online. The path we'll use is `/v1/message` to
-handle all Stream events. For convenience, we'll turn off auth/permission
-checks. In a production environment make sure you don't bypass these and
-implement the necessary code to secure your Stream account. Your webhook should
-look like this with your, ngrok or otherwise, URL instead of the ngrok url.
-
-![Webhook Setup](images/step-2.2_webhook.png)
-
-We'll look at the implementation of `/v1/message` in [Step 9](#step-9).
-  
 ## Step 3. User authenticates With Backend
 Now that we have our backend set up and running, it is time to authenticate with
 the backend. If you're running the application, you'll be presented with a
