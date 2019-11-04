@@ -160,7 +160,7 @@ Dialogflow:
   
 ![transfer action](images/step-1_transfer-money.png)
 
-## Step 2. Set up the Backend to allow browser to get credentials
+## Step 2.1 Set up the backend to allow user to get credentials
 For our React frontend to interact with Stream and Virgil, the
 application provides three endpoints:
 
@@ -175,22 +175,27 @@ application provides three endpoints:
   tell Stream this user exists and ask them to create a valid auth token:
   ```javascript
   // backend/src/controllers/v1/stream-credentials.js
+  import { chat } from '../../stream';
+
   exports.streamCredentials = async (req, res) => {
-    const data = req.body;
-    const apiKey = process.env.STREAM_API_KEY;
-    const apiSecret = process.env.STREAM_API_SECRET;
+    try {
+      const data = req.body;
 
-    const client = new StreamChat(apiKey, apiSecret);
+      const user = Object.assign({}, data, {
+        id: req.user.sender,
+        role: 'user',
+        image: `https://robohash.org/${req.user.sender}`,
+      });
 
-    const user = Object.assign({}, data, {
-      id: `${req.user.sender}`,
-      role: 'admin',
-      image: `https://robohash.org/${req.user.sender}`,
-    });
-    const token = client.createToken(user.id);
-    await client.updateUsers([user]);
-    res.status(200).json({ user, token, apiKey });
-  }
+      const token = chat.createToken(user.id);
+      await chat.updateUsers([user]);
+
+      res.status(200).json({ user, token, apiKey: process.env.STREAM_API_KEY });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: error.message });
+    }
+  };
   ```
   
   The response payload has this shape:
@@ -215,31 +220,52 @@ application provides three endpoints:
   connect the frontend to Virgil. We use the Virgil Crypto SDK to generate a
   valid auth token for us:
   ```javascript
-  // backend/src/controllers/v1/virgil-credentials.js
+  // backend/src/virgil.js
   const virgilCrypto = new VirgilCrypto();
-  
+
   const generator = new JwtGenerator({
     appId: process.env.VIRGIL_APP_ID,
     apiKeyId: process.env.VIRGIL_KEY_ID,
     apiKey: virgilCrypto.importPrivateKey(process.env.VIRGIL_PRIVATE_KEY),
     accessTokenSigner: new VirgilAccessTokenSigner(virgilCrypto)
   });
-  
-  
-  exports.virgilCredentials = async (req, res) => {
-    const virgilJwtToken = generator.generateToken(req.user.sender);
+
+  exports.virgilToken = (user) => generator.generateToken(user);
+
+  // backend/src/controllers/v1/virgil-credentials.js
+  import { virgilToken } from '../../virgil';
+
+  exports.virgilCredentials = (req, res) => {
+    const virgilJwtToken = virgilToken(req.user.sender);
   
     res.json({ token: virgilJwtToken.toString() });
   };
   ```
   In this case, the frontend only needs the auth token.
+
+## Step 2.2 Setup backend to monitor channel and respond to user
+
+In order for us to monitor and respond to a user's chat message we need to hook
+into Stream via [webhooks](https://getstream.io/chat/docs/js/#webhooks). From
+your Stream dashboard navigate to Chat -> Chat overview and look for the "Chat
+events" section. Switch the webhook to active and add the URL for your server.
+For local development, you can use a service like [ngrok](https://ngrok.com/) to
+make your localhost routable online. The path we'll use is `/v1/message` to
+handle all Stream events. For convenience, we'll turn off auth/permission
+checks. In a production environment make sure you don't bypass these and
+implement the necessary code to secure your Stream account. Your webhook should
+look like this with your, ngrok or otherwise, URL instead of the ngrok url.
+
+![Webhook Setup](images/step-2.2_webhook.png)
+
+We'll look at the implementation of `/v1/message` in [Step 9](#step-9).
   
-## Step 1. User authenticates With Backend
+## Step 3. User authenticates With Backend
 Now that we have our backend set up and running, it is time to authenticate with
 the backend. If you're running the application, you'll be presented with a
 screen like so:
 
-![Registration](https://ibin.co/4vvtGI3QmdkH.png)
+![Registration](images/step-3_registration.png)
 
 This is a simple React form that takes the provided input, stores it in the
 state as `sender`, and uses that information to authenticate against the
@@ -255,8 +281,8 @@ post("http://localhost:8080/v1/authenticate", { sender: this.state.sender })
 Once we have created an sender identity with an auth token, we can connect to
 Stream and Virgil.
 
-## Step 2. User connects to Stream
-Using the credentials from [Step 1](#step-1-user-authenticates-with-backend), we
+## Step 4. User connects to Stream
+Using the credentials from [Step 2](#step-2-user-authenticates-with-backend), we
 can request Stream credentials from the backend. Using those we connect our
 frontend client to Stream:
 
@@ -271,9 +297,9 @@ client.setUser(response.user, response.token);
 This initializes the `StreamChat` object from the `Stream Chat React` library
 and authenticates a user using the token generated in the backend.
 
-## Step 3. User connects to Virgil
+## Step 5. User connects to Virgil
 Once again, using the credentials acquired in
-[Step 1](#step-1-user-authenticates-with-backend) we ask the backend to generate
+[Step 2](#step-2-user-authenticates-with-backend) we ask the backend to generate
 a Virgil auth token. Using this token we initialize the `EThree` object from
 Virgil's `e3kit` library:
 
@@ -284,53 +310,44 @@ const eThree = await EThree.initialize(() => response.token);
 await eThree.register();
 ```
 
-## Step 4. Create Stream Chat Channel
+## Step 6. Create Stream Chat Channel
 Once we're connected to both Stream and Virgil, we're ready to start chatting
-with someone. After you've clicked "Register" in the tutorial app, you'll see a
-screen like this:
-
-![Start Chat](https://ibin.co/4vvty06h6BwP.png)
-
-This form asks for the identity of the user you want to chat with. If they have
-registered in another browser window, we can create a Stream Chat `Channel` 
-that's private to those two members:
+with our chatbot. To do this, the client creates a channel between them and the
+chatbot.
 
 ```javascript
 // frontend/src/StartChat.js
-let members = [this.state.sender, this.state.receiver];
-members.sort();
-
-const channel = this.state.stream.client.channel('messaging', {
-  image: `https://getstream.io/random_svg/?id=rapid-recipe-0&name=${members.join("+")}`,
-  name: members.join(", "),
-  members: members,
+const channel = this.state.stream.client.channel('team', `${this.state.sender}-chatbot`, {
+  image: `https://getstream.io/random_svg/?id=rapid-recipe-0&name=${this.state.sender}`,
+  name: this.state.sender,
+  members: [this.state.sender, 'chatbot'],
 });
 ```
 
 The client we're accessing in the state is the one created in 
-[Step 2](#step-2-user-connects-to-stream). Calling `.channel` will create or
+[Step 4](#step-4-user-connects-to-stream). Calling `.channel` will create or
 join a unique channel based on the identities of the members. Only those two
 members will be allowed in. However, this is not enough to protect Stream or
 others from viewing those users' messages.
 
-## Step 5. Lookup Virgil public keys
+## Step 7. Lookup Virgil public keys
 In order to encrypt a message before sending it through a Stream channel, we need 
 to look up the receiver's public key:
 
 ```javascript
 // frontend/src/StartChat.js
-const publicKeys = await this.state.virgil.eThree.lookupPublicKeys([this.state.sender, this.state.receiver]);
+const publicKeys = await this.state.virgil.eThree.lookupPublicKeys([this.state.sender, 'chatbot']);
 ```
 
 The `eThree` instance in our state is from 
-[Step 3](#step-3-user-connects-to-virgil). Assuming that the sender's identity
-is `will` and the receiver's identity is `sara`, this returns an object that
+[Step 5](#step-5-user-connects-to-virgil). Assuming that the sender's identity
+is `will`, this returns an object that
 looks like:
 
 ```javascript
 {
   will: {/* Public Key Info */},
-  sara: {/* Public Key Info */}
+  chatbot: {/* Public Key Info */}
 }
 ```
 
@@ -338,7 +355,7 @@ Since we need to decrypt received own messages for display, and for convenience,
 we ask for both public keys at the same time.
 
 
-## Step 6. Sender encrypts message and sends it via Stream
+## Step 8. Sender encrypts message and sends it via Stream
 We have everything we need to send a secure, end-to-end encrypted message via
 Stream. Time to chat! First, we need to show the user the chat room:
 
@@ -359,7 +376,7 @@ Stream. Time to chat! First, we need to show the user the chat room:
 This renders the Stream React Chat component that creates a great out-of-the box
 experience for our users. If you're following along you'll see this:
 
-![Empty Chat](https://ibin.co/4vvw8sYTfJCM.png)
+![Empty Chat](images/step-8_empty-chat.png) 
 
 Notice the line where we include our custom class `MessageInputEncrypted`. This
 component uses the sender's public key from Virgil to encrypt, then wrap, a
@@ -390,7 +407,7 @@ export class MessageInputEncrypted extends PureComponent {
 
 Now all Stream will see is the ciphertext!
 
-## Step 7. Receiver decrypts and reads message
+## Step 9. The backend receives a webhook
 The last thing to do is decrypt the sender's message on the receiver's side. 
 Assuming you've gone through chat room setup you will see:
 

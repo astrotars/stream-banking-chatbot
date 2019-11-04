@@ -15,8 +15,9 @@ const generator = new JwtGenerator({
   accessTokenSigner: new VirgilAccessTokenSigner(virgilCrypto)
 });
 
-const chatbotToken = generator.generateToken('chatbot');
-
 exports.virgilToken = (user) => generator.generateToken(user);
-exports.getEThree = async () => await EThree.initialize(() => chatbotToken);
+exports.getEThree = async () => {
+  const chatbotToken = generator.generateToken('chatbot');
+  return await EThree.initialize(() => chatbotToken);
+};
 
