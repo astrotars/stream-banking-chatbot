@@ -44,7 +44,7 @@ const interpretMessage = async (eThree, publicKey, data) => {
   return responses[0].queryResult;
 };
 
-const buildResponse = (userId, result) => {
+const handleMessage = (userId, result) => {
   let text = '';
 
   if (result.intent.displayName === 'Check Accounts') {
@@ -71,27 +71,32 @@ const buildResponse = (userId, result) => {
   return text;
 };
 
+const respondToUser = async (data) => {
+  const userId = data['user']['id'];
+
+  maybeInitUser(userId);
+
+  const eThree = await getEThree();
+  const publicKey = await eThree.lookupPublicKeys(userId);
+  const channel = chat.channel('team', `${userId}-chatbot`, {});
+
+  const result = await interpretMessage(eThree, publicKey, data);
+  const response = await handleMessage(userId, result);
+
+  const encryptedText = await eThree.encrypt(response, publicKey);
+  const message = {
+    text: encryptedText,
+    user: { id: 'chatbot' },
+  };
+
+  await channel.sendMessage(message);
+};
+
 exports.message = async (req, res) => {
   try {
     const data = req.body;
-    const userId = data['user']['id'];
-    if (data['type'] === 'message.new' && userId !== 'chatbot') {
-      maybeInitUser(userId);
-
-      const eThree = await getEThree();
-      const publicKey = await eThree.lookupPublicKeys(userId);
-      const channel = chat.channel('team', `${userId}-chatbot`, {});
-
-      const result = await interpretMessage(eThree, publicKey, data);
-      const response = await buildResponse(userId, result);
-
-      const encryptedText = await eThree.encrypt(response, publicKey);
-      const message = {
-        text: encryptedText,
-        user: { id: 'chatbot' },
-      };
-
-      await channel.sendMessage(message);
+    if (data['type'] === 'message.new' && data['user']['id'] !== 'chatbot') {
+      await respondToUser(data);
     }
     res.status(200).json({});
   } catch (error) {

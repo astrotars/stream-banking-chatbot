@@ -160,6 +160,11 @@ Dialogflow:
   
 ![transfer action](images/step-1_transfer-money.png)
 
+If you're set up correctly you should see these four intents in your Dialogflow
+console:
+
+![Dialogflow Intents](images/step-1.1_intents.png)
+
 ## Step 1.2 Set up Stream Webhooks
 
 In order for us to monitor and respond to a user's chat message we need to hook
@@ -407,16 +412,132 @@ export class MessageInputEncrypted extends PureComponent {
 
 Now all Stream will see is the ciphertext!
 
-## Step 9. The backend receives a webhook
-The last thing to do is decrypt the sender's message on the receiver's side. 
-Assuming you've gone through chat room setup you will see:
+## Step 9. The backend receives a webhook from stream, sends it to Dialogflow and responds
+Now we can react to the sender's message on the backend, figure out the user's
+intent via Dialogflow, perform an action if any and respond. Since Stream sends
+us every even that happens for our account, we need to first decide if we should
+take action. We only want to do something when we have a `message.new` event
+from any user except for `chatbot`:
 
-![Full Chat](https://ibin.co/4vvvotfqK37K.png)
+```javascript
+// backend/src/controllers/v1/message.js
+exports.message = async (req, res) => {
+  try {
+    const data = req.body;
+    const userId = data['user']['id'];
+    if (data['type'] === 'message.new' && userId !== 'chatbot') {
+      respondToUser(data); 
+    }
+    res.status(200).json({});
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
+};
+```
 
-To decrypt the message we follow a similar pattern to
-[Step 6](#step-6-sender-encrypts-message-and-sends-it-via-stream). If you look
-at how we create the `MessageList` you'll see a custom `Message` component
-called `MessageEncrypted`:
+Once we have decided this a message to respond to, we need to decrypt the
+message, interpret it, decide how to respond, encrypt the response and send it
+via the chat channel.
+
+```javascript
+// backend/src/controllers/v1/message.js
+const respondToUser = async (data) => {
+  const userId = data['user']['id'];
+
+  const eThree = await getEThree();
+  const publicKey = await eThree.lookupPublicKeys(userId);
+  const channel = chat.channel('team', `${userId}-chatbot`, {});
+
+  const result = await interpretMessage(eThree, publicKey, data);
+  const response = await handleMessage(userId, result);
+
+  const encryptedText = await eThree.encrypt(response, publicKey);
+  const message = {
+    text: encryptedText,
+    user: { id: 'chatbot' },
+  };
+
+  await channel.sendMessage(message);
+};
+```
+
+In order to intepret the message, we use the Dialogflow setup configured in
+[Step #1](step-1). We decrypt the user's message, start a Dialogflow session,
+and sen the decrypted message to Dialogflow:
+
+```javascript
+// backend/src/controllers/v1/message.js
+const interpretMessage = async (eThree, publicKey, data) => {
+  const userId = data['user']['id'];
+  const message = await eThree.decrypt(data['message']['text'], publicKey);
+
+  const sessionClient = new dialogflow.SessionsClient();
+  const sessionPath = sessionClient.sessionPath(process.env.GOOGLE_APPLICATION_PROJECT_ID, sessions[userId]);
+
+  const responses = await sessionClient.detectIntent({
+    session: sessionPath,
+    queryInput: {
+      text: {
+        text: message,
+        languageCode: 'en-US',
+      },
+    },
+  });
+
+  return responses[0].queryResult;
+};
+```
+
+Once we've interpreted the message, we can decide how to respond and what
+actions to take. In this simple app, have two explicit actions we care about,
+"Check Accounts" and "Transfer Money". Otherwise, we fallback to the
+`fullfillmentText` configured in Dialogflow. This will either be from the
+`Default Welcome Intent` or `Default Fallback Intent` intents. 
+
+In the case of "Check Accounts" we simply look up the user's account balances
+and respond. For "Transfer Money" we determine the direction, perform the
+balance transfer then respond:
+
+```javascript
+// backend/src/controllers/v1/message.js
+const handleMessage = (userId, result) => {
+  let text = '';
+
+  if (result.intent.displayName === 'Check Accounts') {
+    text = `Here are your balances\nChecking: $${balances[userId].checking}\nSavings: $${balances[userId].savings}`;
+  } else if (result.intent.displayName === 'Transfer Money') {
+    const parameters = struct.decode(result.parameters);
+    const transfer = parameters.transfer;
+    const amount = parameters.amount.amount;
+    if (transfer === 'checking to savings') {
+      balances[userId].checking -= amount;
+      balances[userId].savings += amount;
+      text = result.fulfillmentText;
+    } else if (transfer === 'savings to checking') {
+      balances[userId].checking += amount;
+      balances[userId].savings -= amount;
+      text = result.fulfillmentText;
+    } else {
+      text = 'Failed to transfer, unknown accounts';
+    }
+  } else {
+    text = result.fulfillmentText;
+  }
+
+  return text;
+};
+```
+
+That's it for the server. Even in this constrained example, you can see the
+power that Stream, Virgil and Dialogflow give you when building a secure
+chatbot.
+
+## Step 10. Decrypt the response message on the client
+Finally, we can display the servers To decrypt the message we follow a similar
+pattern to [Step 6](#step-6-sender-encrypts-message-and-sends-it-via-stream). If
+you look at how we create the `MessageList` you'll see a custom `Message`
+component called `MessageEncrypted`:
 
 ```javascript
 // frontend/src/App.js
@@ -469,7 +590,7 @@ export class MessageEncrypted extends PureComponent {
   };
 
   _decryptText = async () => {
-    const messageCreator = this.props.isMyMessage(this.props.message) ? this.props.sender : this.props.receiver;
+    const messageCreator = this.props.isMyMessage(this.props.message) ? this.props.sender : 'chatbot';
     return this.props.virgil.eThree.decrypt(
       this.props.message.text,
       this.props.virgil.publicKeys[messageCreator]
@@ -505,13 +626,12 @@ This tutorial is intended to get you up and running as fast as possible. Because
 of this, some critical functionality may be missing from your application. Here
 are some tips for what to do next with your app.
 
+* Configure a deeper chatbot experience. Dialogflow has a ton of functionality,
+  such as [context](https://cloud.google.com/dialogflow/docs/contexts-overview),
+  to build robust chatbot experiences.
 * Build real user registration and protect identity registration. This tutorial
   simplified registration and retrieving valid tokens to interact with Stream
   and Virgil.
 * Backup user's private keys to restore sessions and for multiple devices. Using
   Virgil's `eThree.backupPrivateKey(pwd)` will securely store the private key
   for restoration on any device.
-* Integrate user image and file uploads. This functionality is hidden in this
-  app via CSS. You can look at hooking into Stream React Chat's
-  [MessageInput](https://getstream.github.io/stream-chat-react/#messageinput) or
-  use as a jumping off point to build your own chat widget.
