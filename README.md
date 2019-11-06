@@ -469,7 +469,7 @@ const respondToUser = async (data) => {
 ```
 
 In order to intepret the message, we use the Dialogflow setup configured in
-[Step 1.1](#step-1.1-set-up-dialogflow). We decrypt the user's message and send
+[Step 1.1](#step-11-set-up-dialogflow). We decrypt the user's message and send
 the decrypted message to Dialogflow:
 
 ```javascript
