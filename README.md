@@ -14,17 +14,18 @@ chatbot experience while keeping sensitive information encrypted. The
 application embeds Virgil Security's
 [eThree Kit](https://github.com/VirgilSecurity/virgil-e3kit-js) with
 [Stream Chat React](https://github.com/GetStream/stream-chat-react)'s components
-and uses Stream's webhook integration to communicate with a backend which
-utilizes Dialogflow. All source code for this application is available on
-[GitHub](https://github.com/psylinse/stream-banking-chatbot).
+The react app communicates with a backend that uses Stream's webhook integration
+and Dialogflow to respond to the user. All source code for this application is
+available on [GitHub](https://github.com/psylinse/stream-banking-chatbot).
 
 Stream Chat, Virgil, and Dialogflow make it easy to build a solution with
 excellent security with all the features you expect.
 
 ## What is end-to-end encryption?
 
-End-to-end encryption means that they can only read messages sent between two people. To do this, the message is encrypted before it leaves a user's
-device, and can only be decrypted by the intended recipient.
+End-to-end encryption means that they can only read messages sent between two
+people. To do this, the message is encrypted before it leaves a user's device,
+and can only be decrypted by the intended recipient.
 
 Virgil Security is a vendor that will enable us to create end-to-end encryption via
 public/private key technology. Virgil provides a platform and JavaScript SDK
@@ -37,9 +38,6 @@ No one in your company, nor any cloud provider you use, can read these messages.
 Even if a malicious person gained access to the database containing the
 messages, all they would see is encrypted text, called ciphertext.
 
-## What is Dialogflow?
-Do I need this?
-
 # Building the chatbot
 
 To build this application, we're going to rely on a few libraries,
@@ -50,8 +48,10 @@ Dialogflow](https://github.com/googleapis/nodejs-dialogflow). Our final product
 will encrypt text in the browser before sending a message to Stream Chat. The
 encrypted message will be relayed to our backend via Stream's webhooks.
 Decryption and verification will happen on the backend before passing it to
-Dialogflow for interpretation. Once an intent has been determined, the backend
-performs any necessary actions, encrypts the response, and relays it via Stream.
+Dialogflow for interpretation. Once an
+[intent](https://cloud.google.com/dialogflow/docs/intents-overview) has been
+determined, the backend performs any necessary actions, encrypts the response,
+and relays it via a Stream channel.
 
 Our chatbot will have 3 intents a user can perform, with 1 fallback in case we
 don't understand what is said. These are a greeting, check balances, and
@@ -60,34 +60,34 @@ capable of this:
 
 ![Full Functionality](images/building-the-chatbot_full-functionality.png)
 
-To accomplish this, the app performs the following steps:
+To accomplish this, the app performs the following process:
 
-1. A user authenticates with your backend.
-2. The user's app requests a Stream auth token and api key from the backend. The
+* A user authenticates with your backend.
+* The user's app requests a Stream auth token and api key from the backend. The
    browser creates a
    [Stream Chat Client](https://getstream.io/chat/docs/#init_and_users) for that
    user.
-3. The user's app requests a Virgil auth token from the backend and registers
-   with Virgil. This generates their private and public key. The private key is
-   stored locally, and the public key is stored in Virgil.
-4. The user joins a
-   [Stream Chat Channel](https://getstream.io/chat/docs/#initialize_channel)
-   with the chatbot.
-5. The browser app asks Virgil for chatbot's public key.
-6. The user types a message and sends it to stream. Before sending, the app
-   passes the chatbot's public key to Virgil to encrypt the message. The message
-   is relayed through Stream Chat to the backend via a webhook. Stream receives
-   ciphertext, meaning they can never see the original message.
-7. When the backend receives the message, the app decrypts the message using the
-   Virgil. Virgil verifies the message is authentic by using the sender's public
-   key.
-8. The backend passes the decrypted text to Dialogflow to determine the user's
-   intent. Dialogflow returns a result which contains the information necessary
-   for the backend to decide how to respond.
-9. The backend receives the Diagflow response, decides what action to take, and
-   creates the response text.
-10. Using Virgil, the backend encrypts the response text and responds to the
-    user via the Stream Chat Channel.
+* The user's app requests a Virgil auth token from the backend and registers
+  with Virgil. This generates their private and public key. The private key is
+  stored locally, and the public key is stored in Virgil.
+* The user joins a
+  [Stream Chat Channel](https://getstream.io/chat/docs/#initialize_channel) with
+  the chatbot.
+* The browser app asks Virgil for chatbot's public key.
+* The user types a message and sends it to stream. Before sending, the app
+  passes the chatbot's public key to Virgil to encrypt the message. The message
+  is relayed through Stream Chat to the backend via a webhook. Stream receives
+  ciphertext, meaning they can never see the original message.
+* When the backend receives the message, the app decrypts the message using the
+  Virgil. Virgil verifies the message is authentic by using the sender's public
+  key.
+* The backend passes the decrypted text to Dialogflow to determine the user's
+  intent. Dialogflow returns a result which contains the information necessary
+  for the backend to decide how to respond.
+* The backend receives the Diagflow response, decides what action to take, and
+  creates the response text.
+* Using Virgil, the backend encrypts the response text and responds to the user
+  via the Stream Chat Channel. The client decrypts the message.
 
 This looks intimidating, but luckily Stream, Virgil, and Dialogflow do the heavy
 lifting for us. As a developer using these services, our responsibility is to
@@ -146,7 +146,9 @@ Dialogflow:
 
 * Add a "Transfer" entity. Click on "Entities" in the nav, and click "Create
   Entity". Name it "transfer" and create two synonyms, "checking to savings" and
-  "savings to checking":
+  "savings to checking". This is a very simple intent used for demonstration
+  purposes only. Be sure to read up on how to create more sophisticated
+  entities:
   
 ![transfer](images/step-1_transfer.png)
 
@@ -181,7 +183,8 @@ look like this with your, ngrok or otherwise, URL instead of the ngrok url.
 
 ![Webhook Setup](images/step-2.2_webhook.png)
 
-We'll look at the implementation of `/v1/message` in [Step 9](#step-9).
+We'll look at the implementation of `/v1/message` in
+[Step 9](#step-9-the-backend-receives-a-webhook-from-stream-sends-it-to-dialogflow-and-responds).
   
 ## Step 2 Set up the backend to allow user to get credentials
 For our React frontend to interact with Stream and Virgil, the
@@ -266,7 +269,7 @@ application provides three endpoints:
   ```
   In this case, the frontend only needs the auth token.
 
-## Step 3. User authenticates With Backend
+## Step 3. User authenticates with the backend
 Now that we have our backend set up and running, it is time to authenticate with
 the backend. If you're running the application, you'll be presented with a
 screen like so:
@@ -288,7 +291,7 @@ Once we have created an sender identity with an auth token, we can connect to
 Stream and Virgil.
 
 ## Step 4. User connects to Stream
-Using the credentials from [Step 2](#step-2-user-authenticates-with-backend), we
+Using the credentials from [Step 3](#step-3-user-authenticates-with-backend), we
 can request Stream credentials from the backend. Using those we connect our
 frontend client to Stream:
 
@@ -305,7 +308,7 @@ and authenticates a user using the token generated in the backend.
 
 ## Step 5. User connects to Virgil
 Once again, using the credentials acquired in
-[Step 2](#step-2-user-authenticates-with-backend) we ask the backend to generate
+[Step 3](#step-3-user-authenticates-with-backend) we ask the backend to generate
 a Virgil auth token. Using this token we initialize the `EThree` object from
 Virgil's `e3kit` library:
 
@@ -330,11 +333,12 @@ const channel = this.state.stream.client.channel('team', `${this.state.sender}-c
 });
 ```
 
-The client we're accessing in the state is the one created in 
+The client we're accessing in the state is the one created in
 [Step 4](#step-4-user-connects-to-stream). Calling `.channel` will create or
-join a unique channel based on the identities of the members. Only those two
-members will be allowed in. However, this is not enough to protect Stream or
-others from viewing those users' messages.
+join a unique channel based on the identities of the members. Only them user and
+the chatbot will be allowed in. However, this is not enough to protect Stream or
+others from viewing those users' messages. Next we'll use Virgil to encrypt the
+messages.
 
 ## Step 7. Lookup Virgil public keys
 In order to encrypt a message before sending it through a Stream channel, we need 
@@ -464,8 +468,8 @@ const respondToUser = async (data) => {
 ```
 
 In order to intepret the message, we use the Dialogflow setup configured in
-[Step #1](step-1). We decrypt the user's message, start a Dialogflow session,
-and sen the decrypted message to Dialogflow:
+[Step #1.1](step-1.1-set-up-dialogflow). We decrypt the user's message and send
+the decrypted message to Dialogflow:
 
 ```javascript
 // backend/src/controllers/v1/message.js
@@ -536,7 +540,7 @@ chatbot.
 
 ## Step 10. Decrypt the response message on the client
 Finally, we can display the servers To decrypt the message we follow a similar
-pattern to [Step 6](#step-6-sender-encrypts-message-and-sends-it-via-stream). If
+pattern to [Step 8](#step-8-sender-encrypts-message-and-sends-it-via-stream). If
 you look at how we create the `MessageList` you'll see a custom `Message`
 component called `MessageEncrypted`:
 
