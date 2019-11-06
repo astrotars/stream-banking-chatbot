@@ -291,9 +291,10 @@ Once we have created an sender identity with an auth token, we can connect to
 Stream and Virgil.
 
 ## Step 4. User connects to Stream
-Using the credentials from [Step 3](#step-3-user-authenticates-with-backend), we
-can request Stream credentials from the backend. Using those we connect our
-frontend client to Stream:
+Using the credentials from
+[Step 3](#step-3-user-authenticates-with-the-backend), we can request Stream
+credentials from the backend. Using those we connect our frontend client to
+Stream:
 
 ```javascript
 // frontend/src/StartChat.js
@@ -308,9 +309,9 @@ and authenticates a user using the token generated in the backend.
 
 ## Step 5. User connects to Virgil
 Once again, using the credentials acquired in
-[Step 3](#step-3-user-authenticates-with-backend) we ask the backend to generate
-a Virgil auth token. Using this token we initialize the `EThree` object from
-Virgil's `e3kit` library:
+[Step 3](#step-3-user-authenticates-with-the-backend) we ask the backend to
+generate a Virgil auth token. Using this token we initialize the `EThree` object
+from Virgil's `e3kit` library:
 
 ```javascript
 // frontend/src/StartChat.js
@@ -468,7 +469,7 @@ const respondToUser = async (data) => {
 ```
 
 In order to intepret the message, we use the Dialogflow setup configured in
-[Step #1.1](step-1.1-set-up-dialogflow). We decrypt the user's message and send
+[Step 1.1](#step-1.1-set-up-dialogflow). We decrypt the user's message and send
 the decrypted message to Dialogflow:
 
 ```javascript
