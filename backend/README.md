@@ -29,5 +29,6 @@ GOOGLE_APPLICATION_CREDENTIALS=<YOUR_GOOGLE_APPLICATION_CREDENTIALS>
 > Note: You can reference `.env.example`.
 
 To spin this up, clone it and run `yarn install` within the `backend` directory,
-then run `yarn start`.
+then run `yarn start`. Make sure you've followed the steps in the repo's README to set up 
+Stream webhooks via ngrok or some other means, otherwise you won't see any chatbot responses.
 
